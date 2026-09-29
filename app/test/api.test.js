@@ -95,7 +95,7 @@ test('routing and pagination errors', async t => {
 
 test('health, metrics, structured logs, and graceful draining', async t => {
   const { request, drain, logs } = await fixture(t);
-  assert.equal((await (await request('/')).json()).service, 'products-service');
+  assert.equal((await (await request('/api')).json()).service, 'products-service');
   assert.equal((await request('/health/live')).status, 200);
   assert.equal((await request('/health/ready')).status, 200);
   await request('/products');
@@ -139,4 +139,44 @@ test('products survive an application restart', async t => {
   } finally {
     await second.close();
   }
+});
+
+test('dashboard and assets are served safely, including HEAD requests', async t => {
+  const { request } = await fixture(t);
+  for (const [path, type, content] of [
+    ['/', 'text/html', '<title>Stockroom'],
+    ['/styles.css', 'text/css', '.product-grid'],
+    ['/dashboard.js', 'text/javascript', 'function openEditor'],
+  ]) {
+    const response = await request(path);
+    assert.equal(response.status, 200);
+    assert.ok(response.headers.get('content-type').startsWith(type));
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    assert.ok(response.headers.get('content-security-policy').includes("script-src 'self'"));
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    assert.ok(new TextDecoder().decode(bytes).includes(content));
+    const head = await request(path, { method: 'HEAD' });
+    assert.equal(head.status, 200);
+    assert.equal(Number(head.headers.get('content-length')), bytes.length);
+    assert.equal(await head.text(), '');
+    assert.equal((await request(path, { method: 'POST' })).status, 405);
+  }
+  for (const path of ['/src/store.js', '/data/products.sqlite', '/package.json', '/%2e%2e%2fsrc/store.js']) {
+    assert.equal((await request(path)).status, 404);
+  }
+});
+
+test('search filters names and descriptions before counting and paginating', async t => {
+  const { request } = await fixture(t);
+  for (const item of [product, { name: 'Mouse', description: 'USB mouse', priceCents: 999 }, { name: '100% cotton', priceCents: 500 }]) {
+    assert.equal((await request('/products', body(item))).status, 201);
+  }
+  const matches = await (await request('/products?search=UsB&limit=1&offset=1')).json();
+  assert.equal(matches.total, 2);
+  assert.equal(matches.items.length, 1);
+  assert.equal((await (await request('/products?search=KEYBOARD')).json()).items[0].name, 'Keyboard');
+  assert.equal((await (await request('/products?search=%25')).json()).total, 1);
+  assert.equal((await (await request('/products?search=' + encodeURIComponent("' OR 1=1 --"))).json()).total, 0);
+  assert.equal((await (await request('/products?search=%20%20')).json()).total, 3);
+  assert.equal((await request('/products?search=' + 'a'.repeat(121))).status, 400);
 });

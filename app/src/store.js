@@ -21,10 +21,11 @@ export function createStore(filename) {
   const columns = 'id, name, description, price_cents AS priceCents, created_at AS createdAt, updated_at AS updatedAt';
   const get = db.prepare(`SELECT ${columns} FROM products WHERE id = ?`);
   return {
-    list(limit, offset) {
+    list(limit, offset, search = '') {
+      const filter = 'WHERE instr(lower(name), lower(?)) > 0 OR instr(lower(description), lower(?)) > 0';
       return {
-        items: db.prepare(`SELECT ${columns} FROM products ORDER BY created_at, id LIMIT ? OFFSET ?`).all(limit, offset),
-        total: db.prepare('SELECT count(*) AS total FROM products').get().total,
+        items: db.prepare(`SELECT ${columns} FROM products ${filter} ORDER BY created_at, id LIMIT ? OFFSET ?`).all(search, search, limit, offset),
+        total: db.prepare(`SELECT count(*) AS total FROM products ${filter}`).get(search, search).total,
         limit,
         offset,
       };

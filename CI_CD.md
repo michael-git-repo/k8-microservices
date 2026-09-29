@@ -50,7 +50,7 @@ From this repository in WSL Ubuntu:
 ```bash
 git pull --ff-only origin main
 # Edit the application, then:
-git add app/src
+git add app/src app/public
 git commit -m "Update products service"
 git push origin main
 ```
@@ -79,13 +79,13 @@ kubectl -n argocd annotate application products-service argocd.argoproj.io/refre
 
 ## Open the app and Argo CD
 
-For the products API:
+For the product dashboard and API:
 
 ```bash
 kubectl -n microservices port-forward service/products-service 18080:80
 ```
 
-Open http://localhost:18080/products. Port-forwarding connects to a particular
+Open http://localhost:18080/. The JSON API is at `/products`. Port-forwarding connects to a particular
 pod; restart it after a rollout if the connection stops working.
 
 For the Argo CD UI, use another terminal:

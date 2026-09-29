@@ -11,7 +11,7 @@ Docker Compose's database.
 
 ## Open the service
 
-http://localhost:18080/products
+Open http://localhost:18080/ for the product dashboard. `/products` returns JSON.
 
 A background port-forward was started for this setup. Port 8080 was already in
 use, so this service uses 18080. Port-forwarding must be running for this address
@@ -53,7 +53,7 @@ GitHub Actions publishes images and Argo CD deploys them. From Ubuntu:
 cd "/mnt/c/Users/USER/Downloads/k8 micro services"
 git pull --ff-only origin main
 # Make your application changes, then:
-git add app/src
+git add app/src app/public
 git commit -m "Update products service"
 git push origin main
 ```

@@ -4,9 +4,9 @@ A standalone HTTP service responsible for a product catalogue. It owns its
 SQLite database and can be built and deployed independently. This is one
 microservice; other services can call its API without accessing its database.
 
-It includes product CRUD, validation, pagination, health probes, structured
+It includes a product dashboard, search, CRUD, validation, pagination, health probes, structured
 request logs, Prometheus metrics, automated tests, Docker, and Kubernetes files.
-There is no frontend and no external npm dependency.
+The frontend uses HTML, CSS, and JavaScript with no external npm dependency.
 
 ## Run locally
 
@@ -18,8 +18,11 @@ npm.cmd start
 ```
 
 On macOS/Linux, use `npm start`. No `npm install` is needed. Open
-http://localhost:3000/products to see the catalogue, initially empty. The root
-URL returns service information. Stop the service with Ctrl+C.
+http://localhost:3000/ to open the product dashboard. Add, edit, delete, and search
+products from the browser. The catalogue is initially empty. Prices are displayed
+in pounds (GBP), so entering 24.99 stores `priceCents: 2499`.
+The JSON API remains at `/products`; service information is at `/api`.
+Stop the service with Ctrl+C.
 
 The local database is `app/data/products.sqlite` when started from `app/`.
 Products survive restarts. SQLite files and local environment files are ignored
@@ -44,8 +47,9 @@ Invoke-RestMethod -Uri "http://localhost:3000/products/$($product.id)" -Method D
 
 | Method | Path | Result |
 | --- | --- | --- |
-| GET | `/` | Service information |
-| GET | `/products?limit=20&offset=0` | `{ items, total, limit, offset }` |
+| GET | `/` | Product dashboard (HTML) |
+| GET | `/api` | Service information (JSON) |
+| GET | `/products?limit=20&offset=0&search=keyboard` | `{ items, total, limit, offset }` |
 | POST | `/products` | Create product; 201 with `Location` header |
 | GET | `/products/{id}` | Retrieve product |
 | PUT | `/products/{id}` | Replace name, description, and price |
@@ -70,6 +74,9 @@ currency. `description` is optional, defaults to an empty string, and is limited
 to 2000 characters. PUT replaces these fields; it is not a partial update.
 Unknown fields are rejected. Request bodies are limited to 16 KiB. List limits
 range from 1 to 100. Responses include UUID identifiers and UTC timestamps.
+The optional `search` parameter matches name or description (up to 120 characters;
+ASCII case insensitive). Totals and pagination apply to the filtered results.
+The dashboard shows 12 products per page; its average price covers that page.
 
 Errors use `{ "error": "message", "requestId": "uuid" }`. Status codes include
 400 for validation, 404 for missing products/routes, 405 for unsupported methods,
@@ -96,7 +103,7 @@ npm.cmd run test:coverage
 ```
 
 Tests exercise real HTTP requests, the product lifecycle, invalid input, request
-limits, pagination, health checks, metrics, error handling, draining, and durable
+limits, pagination, search, frontend asset delivery, health checks, metrics, error handling, draining, and durable
 storage across application restarts. Tests use isolated databases and ephemeral
 ports. Coverage reports cover the imported API and storage modules, not the
 standalone startup script.
@@ -110,7 +117,7 @@ docker compose up --build -d
 docker compose logs -f products
 ```
 
-The API is at http://localhost:3000. `docker compose down` stops it while retaining
+The dashboard is at http://localhost:3000/. `docker compose down` stops it while retaining
 the named data volume. The container runs as a non-root user with a read-only
 root filesystem; `/data` is the writable database volume. Stop any native server
 using port 3000 before starting Compose.
@@ -122,7 +129,7 @@ CI checks container startup as well as running the API tests and image scan.
 ## Kubernetes
 
 For the cluster already configured in your WSL Ubuntu environment, see
-[LOCAL_CLUSTER.md](LOCAL_CLUSTER.md), including the running API on port 18080.
+[LOCAL_CLUSTER.md](LOCAL_CLUSTER.md), including the dashboard on port 18080.
 For automated publishing and deployment, see [CI_CD.md](CI_CD.md).
 
 Use a cluster with a default StorageClass capable of provisioning a 1 GiB volume.
@@ -144,7 +151,7 @@ kubectl -n microservices rollout status deployment/products-service
 kubectl -n microservices port-forward service/products-service 3000:80
 ```
 
-The port-forward makes the API available at http://localhost:3000. These files
+The port-forward makes the dashboard available at http://localhost:3000/. These files
 do not install Kubernetes or provision a cloud cluster. Deleting the PVC may
 delete its stored data, depending on your storage class's reclaim policy.
 

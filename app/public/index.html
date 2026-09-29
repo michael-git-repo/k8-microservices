@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#191c30">
+  <title>Stockroom · Product catalogue</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%237159ee'/%3E%3Cpath d='m10 15 10-5 10 5v12l-10 5-10-5Zm0 0 10 5 10-5M20 20v12' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/dashboard.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Stockroom home"><span class="brand-icon">▧</span> stockroom<span class="brand-dot">.</span></a>
+    <div class="workspace"><span class="workspace-icon">M</span><div>My workspace<small>Product management</small></div></div>
+    <p class="nav-label">WORKSPACE</p>
+    <nav aria-label="Main"><a class="nav-active" href="/" aria-current="page"><span aria-hidden="true">▦</span> Products <span class="nav-arrow" aria-hidden="true">↗</span></a></nav>
+    <div class="sidebar-note"><span aria-hidden="true">✦</span><h2>A little more organised.</h2><p>One home for your products.<br>Ready for your next big idea.</p></div>
+    <div class="profile"><span class="avatar">M</span><div>Michael’s workspace<small>Your product catalogue</small></div></div>
+  </aside>
+  <main>
+    <header class="topbar"><div>Workspace <span>/</span> <strong>Products</strong></div><span id="connection" class="connection">Connecting…</span></header>
+    <section class="content" aria-labelledby="page-title">
+      <div class="page-heading"><div><p class="eyebrow">YOUR CATALOGUE, AT A GLANCE</p><h1 id="page-title">Products<span>.</span></h1><p class="subtitle">Big ideas start with a well-kept collection.</p></div><button class="button primary" id="add-product"><span aria-hidden="true">＋</span> Add product</button></div>
+      <div class="stats">
+        <article class="stat"><span class="stat-icon purple" aria-hidden="true">▦</span><div><p id="count-label">Total products</p><strong id="total">—</strong></div><span class="stat-caption">In your catalogue</span></article>
+        <article class="stat"><span class="stat-icon green" aria-hidden="true">£</span><div><p>Average price</p><strong id="average">—</strong></div><span class="stat-caption">On this page</span></article>
+        <article class="stat"><span class="stat-icon peach" aria-hidden="true">↻</span><div><p>Last refreshed</p><strong class="time-stat" id="refreshed">—</strong></div><span class="stat-caption">Saved as you go</span></article>
+      </div>
+      <section class="catalogue" aria-labelledby="collection-title">
+        <div class="collection-header"><h2 id="collection-title">Your collection <span id="count-badge">0</span></h2><div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" maxlength="120" placeholder="Search products…" aria-label="Search products"></label><button id="refresh" class="button secondary" title="Refresh products">↻ <span>Refresh</span></button></div></div>
+        <div id="load-error" class="error-banner" role="alert" hidden></div>
+        <div id="loading" class="loading" role="status">Loading your collection…</div>
+        <div id="empty" class="empty" hidden>
+          <svg class="empty-art" viewBox="0 0 220 160" fill="none" aria-hidden="true"><ellipse cx="110" cy="134" rx="68" ry="10" fill="#eae6f8"/><circle cx="110" cy="74" r="62" fill="#f2effc"/><path d="m67 65 43-21 43 21v53l-43 22-43-22Z" fill="#e0d8ff" stroke="#a18ce7" stroke-width="2"/><path d="m67 65 43 22 43-22M110 87v53M89 55l43 21v18l-12 6V82" stroke="#a18ce7" stroke-width="2"/><path d="m150 30 3-8 3 8 8 3-8 3-3 8-3-8-8-3Z" fill="#b1c785"/><circle cx="47" cy="90" r="4" fill="#b5a5ed"/><path d="M175 99h12m-6-6v12" stroke="#b5a5ed" stroke-width="2" stroke-linecap="round"/></svg>
+          <h3 id="empty-title">Your next great product starts here</h3><p id="empty-text">Add your first product and give your collection a home.</p><button class="button primary" id="empty-add">＋ Add your first product</button>
+        </div>
+        <div id="products" class="product-grid" aria-live="polite"></div>
+        <footer class="collection-footer"><span id="page-summary">Your products will appear here</span><div class="pagination"><button class="button secondary" id="previous" aria-label="Previous page" disabled>←</button><span id="page-number">Page 1</span><button class="button secondary" id="next" aria-label="Next page" disabled>→</button></div></footer>
+      </section>
+      <p class="footer-note">Made for the details. Built for what’s next.</p>
+    </section>
+  </main>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <form id="product-form"><div class="dialog-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="editor-title">Add product</h2></div><button type="button" class="close-button" data-close="editor" aria-label="Close">×</button></div>
+      <label for="name">Product name</label><input id="name" name="name" required maxlength="120" placeholder="e.g. Everyday notebook" autocomplete="off">
+      <label for="price">Price (£)</label><input id="price" name="price" type="text" inputmode="decimal" required pattern="[0-9]+([.][0-9]{1,2})?" placeholder="0.00" aria-describedby="price-help"><small id="price-help">Enter a price in pounds, with up to two decimal places.</small>
+      <label for="description">Description <span class="optional">(optional)</span></label><textarea id="description" name="description" rows="4" maxlength="2000" placeholder="What makes this product special?"></textarea>
+      <p id="form-error" class="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="editor">Cancel</button><button type="submit" class="button primary" id="save">Save product</button></div>
+    </form>
+  </dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title"><form id="delete-form"><h2 id="delete-title">Delete product?</h2><p id="delete-description"></p><p class="muted">This will permanently remove it from your collection.</p><p id="delete-error" class="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="delete-dialog">Keep product</button><button type="submit" class="button danger" id="confirm-delete">Delete product</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript><p class="noscript">Please enable JavaScript to manage your product collection.</p></noscript>
+</body>
+</html>

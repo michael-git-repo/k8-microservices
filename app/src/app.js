@@ -1,5 +1,12 @@
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const assets = new Map([
+  ['/', ['index.html', 'text/html']],
+  ['/styles.css', ['styles.css', 'text/css']],
+  ['/dashboard.js', ['dashboard.js', 'text/javascript']],
+].map(([path, [file, type]]) => [path, { type, body: readFileSync(new URL(`../public/${file}`, import.meta.url)) }]));
 
 const MAX_BODY_BYTES = 16 * 1024;
 const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
@@ -82,10 +89,21 @@ export function createApp({ store, logger = entry => console.log(JSON.stringify(
     try {
       const url = new URL(req.url, 'http://localhost');
       const path = url.pathname;
-      if (['/', '/health/live', '/health/ready', '/metrics'].includes(path)) {
+      if (assets.has(path)) {
+        route = path;
+        allow(['GET', 'HEAD']);
+        const asset = assets.get(path);
+        res.writeHead(200, {
+          'Content-Type': `${asset.type}; charset=utf-8`,
+          'Content-Length': asset.body.length,
+          'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+        });
+        return res.end(req.method === 'HEAD' ? undefined : asset.body);
+      }
+      if (['/api', '/health/live', '/health/ready', '/metrics'].includes(path)) {
         route = path;
         allow(['GET']);
-        if (path === '/') return json(200, { service: 'products-service', version: '1.0.0', products: '/products' });
+        if (path === '/api') return json(200, { service: 'products-service', version: '1.0.0', products: '/products' });
         if (path === '/health/live') return json(200, { status: 'ok' });
         if (path === '/health/ready') {
           if (draining) return json(503, { status: 'unavailable' });
@@ -108,7 +126,9 @@ export function createApp({ store, logger = entry => console.log(JSON.stringify(
         route = '/products';
         allow(['GET', 'POST']);
         if (req.method === 'GET') {
-          return json(200, store.list(queryInteger(url, 'limit', 20, 1, 100), queryInteger(url, 'offset', 0, 0, Number.MAX_SAFE_INTEGER)));
+          const search = (url.searchParams.get('search') ?? '').trim();
+          if (search.length > 120) throw new HttpError(400, 'search must be at most 120 characters');
+          return json(200, store.list(queryInteger(url, 'limit', 20, 1, 100), queryInteger(url, 'offset', 0, 0, Number.MAX_SAFE_INTEGER), search));
         }
         const product = store.create(await readProduct(req));
         res.setHeader('Location', `/products/${product.id}`);
