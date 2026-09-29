@@ -1,4 +1,10 @@
-FROM node:24-bookworm-slim
+FROM node:24-alpine
+# This service has no npm dependencies and starts with node directly.
+# Keep OS packages current and exclude unused package managers from the runtime.
+RUN apk upgrade --no-cache \
+    && rm -rf /usr/local/lib/node_modules /opt/yarn-* \
+    && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+       /usr/local/bin/yarn /usr/local/bin/yarnpkg
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3000 DB_PATH=/data/products.sqlite
 WORKDIR /app
 COPY --chown=node:node package.json ./

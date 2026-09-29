@@ -35,6 +35,13 @@ jobs:
         run: node --test scripts/update-image.test.mjs
       - name: Build container
         run: docker build --pull -t products-service:ci ./app
+      - name: Smoke test the runtime container
+        run: |
+          trap 'docker rm -f products-smoke >/dev/null 2>&1 || true' EXIT
+          docker run -d --name products-smoke --read-only --tmpfs /data:uid=1000,gid=1000 \
+            --publish 127.0.0.1:3000:3000 products-service:ci
+          curl --fail --retry 20 --retry-connrefused --retry-delay 1 --max-time 3 \
+            http://127.0.0.1:3000/health/ready
       - name: Scan container vulnerabilities
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:

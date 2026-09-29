@@ -115,6 +115,10 @@ the named data volume. The container runs as a non-root user with a read-only
 root filesystem; `/data` is the writable database volume. Stop any native server
 using port 3000 before starting Compose.
 
+The runtime uses Node 24 on Alpine, updates its OS packages during the build,
+and removes npm and Yarn because the service has no runtime package dependencies.
+CI checks container startup as well as running the API tests and image scan.
+
 ## Kubernetes
 
 For the cluster already configured in your WSL Ubuntu environment, see
