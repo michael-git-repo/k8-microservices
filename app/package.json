@@ -1,0 +1,14 @@
+{
+  "name": "products-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A standalone product catalogue microservice",
+  "type": "module",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage"
+  }
+}

@@ -1,0 +1,17 @@
+groups:
+  - name: products-service
+    rules:
+      - alert: ProductsServiceDown
+        expr: up{job="products-service"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Products service cannot be scraped
+      - alert: ProductsServiceHighErrorRate
+        expr: sum(rate(products_http_requests_total{job="products-service",status=~"5.."}[5m])) / clamp_min(sum(rate(products_http_requests_total{job="products-service"}[5m])), 0.001) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Products service HTTP error rate exceeds 5 percent

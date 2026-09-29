@@ -1,0 +1,16 @@
+services:
+  products:
+    build: ./app
+    image: products-service:local
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - products-data:/data
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+volumes:
+  products-data:

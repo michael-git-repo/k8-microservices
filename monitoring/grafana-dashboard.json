@@ -1,0 +1,25 @@
+{
+  "__inputs": [{ "name": "DS_PROMETHEUS", "label": "Prometheus", "type": "datasource", "pluginId": "prometheus", "pluginName": "Prometheus" }],
+  "title": "Products Service",
+  "uid": "products-service",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": ["products-service"],
+  "timezone": "browser",
+  "refresh": "15s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "title": "Requests per second", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "refId": "A", "expr": "sum by (route) (rate(products_http_requests_total{job=\"products-service\"}[5m]))", "legendFormat": "{{route}}" }]
+    },
+    {
+      "id": 2, "title": "HTTP server errors per second", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "targets": [{ "refId": "A", "expr": "sum(rate(products_http_requests_total{job=\"products-service\",status=~\"5..\"}[5m])) or vector(0)", "legendFormat": "5xx" }]
+    }
+  ]
+}

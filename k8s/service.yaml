@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-service
+  namespace: microservices
+  labels:
+    app: products-service
+spec:
+  type: ClusterIP
+  selector:
+    app: products-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
