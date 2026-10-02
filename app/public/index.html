@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#191c30">
+  <meta name="theme-color" content="#f6f5f0">
   <title>Stockroom · Product catalogue</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%237159ee'/%3E%3Cpath d='m10 15 10-5 10 5v12l-10 5-10-5Zm0 0 10 5 10-5M20 20v12' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
@@ -11,24 +11,28 @@
 </head>
 <body>
   <aside class="sidebar">
-    <a class="brand" href="/" aria-label="Stockroom home"><span class="brand-icon">▧</span> stockroom<span class="brand-dot">.</span></a>
+    <a class="brand" href="/" aria-label="Stockroom home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 7 8-4 8 4v10l-8 4-8-4Zm0 0 8 4 8-4M12 11v10M8 5l8 4"/></svg></span>stockroom<span class="brand-dot">.</span></a>
     <div class="workspace"><span class="workspace-icon">M</span><div>My workspace<small>Product management</small></div></div>
     <p class="nav-label">WORKSPACE</p>
-    <nav aria-label="Main"><a class="nav-active" href="/" aria-current="page"><span aria-hidden="true">▦</span> Products <span class="nav-arrow" aria-hidden="true">↗</span></a></nav>
-    <div class="sidebar-note"><span aria-hidden="true">✦</span><h2>A little more organised.</h2><p>One home for your products.<br>Ready for your next big idea.</p></div>
+    <nav aria-label="Main"><a class="nav-active" href="#collection" aria-current="page"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg> Products <span class="nav-arrow" aria-hidden="true">↗</span></a></nav>
+    <div class="sidebar-note"><span class="note-flower" aria-hidden="true">✳</span><p class="eyebrow">A SPACE TO GROW</p><h2>Small details.<br>Big possibilities.</h2><p>Your ideas deserve<br>a place of their own.</p><a href="#collection">Explore your collection <span aria-hidden="true">↗</span></a></div>
     <div class="profile"><span class="avatar">M</span><div>Michael’s workspace<small>Your product catalogue</small></div></div>
   </aside>
   <main>
-    <header class="topbar"><div>Workspace <span>/</span> <strong>Products</strong></div><span id="connection" class="connection">Connecting…</span></header>
+    <header class="topbar"><div>My workspace <span>/</span> <strong>Product catalogue</strong></div><span id="connection" class="connection" role="status">Connecting…</span></header>
     <section class="content" aria-labelledby="page-title">
-      <div class="page-heading"><div><p class="eyebrow">YOUR CATALOGUE, AT A GLANCE</p><h1 id="page-title">Products<span>.</span></h1><p class="subtitle">Big ideas start with a well-kept collection.</p></div><button class="button primary" id="add-product"><span aria-hidden="true">＋</span> Add product</button></div>
+      <div class="section-intro"><p class="eyebrow">A LITTLE ORDER. A LOT OF POSSIBILITY.</p><span class="edition">THE EVERYDAY WORKSPACE</span></div>
+      <div class="page-heading">
+        <div class="hero-copy"><span class="hero-label"><span aria-hidden="true">✦</span> Made for your next big idea</span><h1 id="page-title">Your products.<br><em>Beautifully organised.</em></h1><p class="subtitle">A thoughtful home for everything you create.<br>Keep the details together. Make room for what’s next.</p><button class="button primary" id="add-product"><span aria-hidden="true">＋</span> Add product <span class="button-arrow" aria-hidden="true">↗</span></button></div>
+        <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-spark spark-one">✳</span><span class="art-spark spark-two">✦</span><div class="art-card art-back"><span class="mini-lines"></span></div><div class="art-card art-front"><div class="art-object"><div class="object-top"></div><div class="object-front"></div><div class="object-side"></div></div><div class="art-card-label"><span>A little possibility.</span><span>↗</span></div></div><span class="art-sticker">GOOD THINGS<br>START HERE ↗</span></div>
+      </div>
       <div class="stats">
-        <article class="stat"><span class="stat-icon purple" aria-hidden="true">▦</span><div><p id="count-label">Total products</p><strong id="total">—</strong></div><span class="stat-caption">In your catalogue</span></article>
+        <article class="stat"><span class="stat-icon purple" aria-hidden="true">▦</span><div><p id="count-label">Total products</p><strong id="total">—</strong></div><span class="stat-caption">Ideas in your collection</span></article>
         <article class="stat"><span class="stat-icon green" aria-hidden="true">£</span><div><p>Average price</p><strong id="average">—</strong></div><span class="stat-caption">On this page</span></article>
         <article class="stat"><span class="stat-icon peach" aria-hidden="true">↻</span><div><p>Last refreshed</p><strong class="time-stat" id="refreshed">—</strong></div><span class="stat-caption">Saved as you go</span></article>
       </div>
-      <section class="catalogue" aria-labelledby="collection-title">
-        <div class="collection-header"><h2 id="collection-title">Your collection <span id="count-badge">0</span></h2><div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" maxlength="120" placeholder="Search products…" aria-label="Search products"></label><button id="refresh" class="button secondary" title="Refresh products">↻ <span>Refresh</span></button></div></div>
+      <section id="collection" class="catalogue" aria-labelledby="collection-title">
+        <div class="collection-header"><div><p class="eyebrow">CURATED BY YOU</p><h2 id="collection-title">Your collection <span id="count-badge">0</span></h2></div><div class="toolbar"><label class="search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="search" type="search" maxlength="120" placeholder="Find something good…" aria-label="Search products"></label><button id="refresh" class="button secondary" title="Refresh products" aria-label="Refresh products"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 6M4 12l2 6a7 7 0 0 0 12-1"/></svg><span>Refresh</span></button></div></div>
         <div id="load-error" class="error-banner" role="alert" hidden></div>
         <div id="loading" class="loading" role="status">Loading your collection…</div>
         <div id="empty" class="empty" hidden>
@@ -38,7 +42,7 @@
         <div id="products" class="product-grid" aria-live="polite"></div>
         <footer class="collection-footer"><span id="page-summary">Your products will appear here</span><div class="pagination"><button class="button secondary" id="previous" aria-label="Previous page" disabled>←</button><span id="page-number">Page 1</span><button class="button secondary" id="next" aria-label="Next page" disabled>→</button></div></footer>
       </section>
-      <p class="footer-note">Made for the details. Built for what’s next.</p>
+      <footer class="footer-note"><span>stockroom<span class="brand-dot">.</span></span><p>A place for your products. Space for your ideas.</p><span class="footer-mark" aria-hidden="true">✳</span></footer>
     </section>
   </main>
   <dialog id="editor" aria-labelledby="editor-title">
