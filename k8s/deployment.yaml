@@ -6,10 +6,14 @@ metadata:
   labels:
     app: products-service
 spec:
-  # This SQLite deployment is deliberately a single instance.
-  replicas: 1
+  # Local learning setup: both replicas share SQLite on the same node.
+  replicas: 2
+  minReadySeconds: 5
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: products-service
@@ -18,6 +22,9 @@ spec:
       labels:
         app: products-service
     spec:
+      # SQLite WAL requires a local filesystem shared on one host.
+      nodeSelector:
+        kubernetes.io/hostname: microservices-control-plane
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 15
       securityContext:

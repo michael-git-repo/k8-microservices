@@ -133,16 +133,21 @@ For the cluster already configured in your WSL Ubuntu environment, see
 For automated publishing and deployment, see [CI_CD.md](CI_CD.md).
 
 Use a cluster with a default StorageClass capable of provisioning a 1 GiB volume.
-The manifests deploy one replica with a PVC and a ClusterIP service. SQLite uses
-local persistent storage, so keep `replicas: 1`; the Recreate strategy prevents
-overlapping replicas during normal Deployment updates and causes brief downtime.
-Use a shared database such as PostgreSQL before scaling the service horizontally.
+The manifests deploy two replicas with a PVC and a ClusterIP service. Both pods
+are pinned to `microservices-control-plane` and share its local SQLite database.
+SQLite WAL permits multiple processes on that same host; writes are serialized.
+This is a local learning setup, not protection against node or database failure.
+Rolling updates use `maxUnavailable: 0` and `maxSurge: 1`, allowing a temporary
+third pod while replacements become ready. The localhost preview still reconnects
+when its selected pod changes. Use a shared database such as PostgreSQL before
+distributing app replicas across nodes or using network filesystem storage.
 
 The Deployment references the published `bleosas/products-service` image on
 Docker Hub by digest. Kubernetes pulls it from the registry. GitHub Actions
 updates that digest after a successful build and vulnerability scan.
 
-To deploy the current manifest manually on another cluster:
+To deploy on another cluster, first adapt the node selector and verify that the
+PVC uses a local filesystem on that same node, then:
 
 ```powershell
 kubectl apply -f k8s/00-namespace.yaml
