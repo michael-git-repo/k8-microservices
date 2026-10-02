@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: products
-          image: bleosas/products-service@sha256:418a6566a5c9a83f56f3063253639deb1903ea5f50d366e5ef88111f42fb8dc2
+          image: bleosas/products-service@sha256:65e318f5544bf3baf9136e7d7a413d40357968e24f11cb949b0cd3a2ac9ccba2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
