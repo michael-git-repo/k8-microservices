@@ -21,10 +21,13 @@ export function createStore(filename) {
   const columns = 'id, name, description, price_cents AS priceCents, created_at AS createdAt, updated_at AS updatedAt';
   const get = db.prepare(`SELECT ${columns} FROM products WHERE id = ?`);
   return {
-    list(limit, offset, search = '') {
+    list(limit, offset, search = '', sort = 'oldest') {
+      // Only fixed SQL fragments can be selected by the public sort parameter.
+      const orders = { oldest: 'created_at, id', newest: 'created_at DESC, id DESC', name: 'name COLLATE NOCASE, id', 'price-asc': 'price_cents, id', 'price-desc': 'price_cents DESC, id' };
+      const order = Object.hasOwn(orders, sort) ? orders[sort] : orders.oldest;
       const filter = 'WHERE instr(lower(name), lower(?)) > 0 OR instr(lower(description), lower(?)) > 0';
       return {
-        items: db.prepare(`SELECT ${columns} FROM products ${filter} ORDER BY created_at, id LIMIT ? OFFSET ?`).all(search, search, limit, offset),
+        items: db.prepare(`SELECT ${columns} FROM products ${filter} ORDER BY ${order} LIMIT ? OFFSET ?`).all(search, search, limit, offset),
         total: db.prepare(`SELECT count(*) AS total FROM products ${filter}`).get(search, search).total,
         limit,
         offset,

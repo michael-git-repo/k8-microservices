@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 const assets = new Map([
   ['/', ['index.html', 'text/html']],
   ['/styles.css', ['styles.css', 'text/css']],
+  ['/studio.css', ['studio.css', 'text/css']],
   ['/dashboard.js', ['dashboard.js', 'text/javascript']],
 ].map(([path, [file, type]]) => [path, { type, body: readFileSync(new URL(`../public/${file}`, import.meta.url)) }]));
 
@@ -128,7 +129,9 @@ export function createApp({ store, logger = entry => console.log(JSON.stringify(
         if (req.method === 'GET') {
           const search = (url.searchParams.get('search') ?? '').trim();
           if (search.length > 120) throw new HttpError(400, 'search must be at most 120 characters');
-          return json(200, store.list(queryInteger(url, 'limit', 20, 1, 100), queryInteger(url, 'offset', 0, 0, Number.MAX_SAFE_INTEGER), search));
+          const sort = url.searchParams.get('sort') ?? 'oldest';
+          if (!['oldest', 'newest', 'name', 'price-asc', 'price-desc'].includes(sort)) throw new HttpError(400, 'Invalid sort order');
+          return json(200, store.list(queryInteger(url, 'limit', 20, 1, 100), queryInteger(url, 'offset', 0, 0, Number.MAX_SAFE_INTEGER), search, sort));
         }
         const product = store.create(await readProduct(req));
         res.setHeader('Location', `/products/${product.id}`);

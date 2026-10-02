@@ -7,9 +7,11 @@
   <title>Stockroom · Product catalogue</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%237159ee'/%3E%3Cpath d='m10 15 10-5 10 5v12l-10 5-10-5Zm0 0 10 5 10-5M20 20v12' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/studio.css">
   <script src="/dashboard.js" defer></script>
 </head>
 <body>
+  <div class="ambient" aria-hidden="true"><div class="ambient-orb orb-blue"></div><div class="ambient-orb orb-pink"></div><div class="ambient-grid"></div></div>
   <aside class="sidebar">
     <a class="brand" href="/" aria-label="Stockroom home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 7 8-4 8 4v10l-8 4-8-4Zm0 0 8 4 8-4M12 11v10M8 5l8 4"/></svg></span>stockroom<span class="brand-dot">.</span></a>
     <div class="workspace"><span class="workspace-icon">M</span><div>My workspace<small>Product management</small></div></div>
@@ -19,11 +21,11 @@
     <div class="profile"><span class="avatar">M</span><div>Michael’s workspace<small>Your product catalogue</small></div></div>
   </aside>
   <main>
-    <header class="topbar"><div>My workspace <span>/</span> <strong>Product catalogue</strong></div><span id="connection" class="connection" role="status">Connecting…</span></header>
+    <header class="topbar"><div>My workspace <span>/</span> <strong>Product studio</strong></div><div class="topbar-actions"><button id="motion-toggle" class="button secondary" aria-pressed="false" title="Pause decorative animations">Pause motion</button><span id="connection" class="connection" role="status">Connecting…</span></div></header>
     <section class="content" aria-labelledby="page-title">
-      <div class="section-intro"><p class="eyebrow">A LITTLE ORDER. A LOT OF POSSIBILITY.</p><span class="edition">THE EVERYDAY WORKSPACE</span></div>
+      <div class="section-intro"><p class="eyebrow">YOUR IDEAS. THEIR NEXT CHAPTER.</p><span class="edition">THE PRODUCT STUDIO</span></div>
       <div class="page-heading">
-        <div class="hero-copy"><span class="hero-label"><span aria-hidden="true">✦</span> Made for your next big idea</span><h1 id="page-title">Your products.<br><em>Beautifully organised.</em></h1><p class="subtitle">A thoughtful home for everything you create.<br>Keep the details together. Make room for what’s next.</p><button class="button primary" id="add-product"><span aria-hidden="true">＋</span> Add product <span class="button-arrow" aria-hidden="true">↗</span></button></div>
+        <div class="hero-copy"><span class="hero-label"><span aria-hidden="true">✦</span> A little space for big possibilities</span><h1 id="page-title">Your products.<br><em>Beautifully organised.</em></h1><p class="subtitle">From the first spark to your next favourite creation.<br>Make something great. We’ll keep the details together.</p><div class="hero-actions"><button class="button primary" id="add-product"><span aria-hidden="true">＋</span> Add product <span class="button-arrow" aria-hidden="true">↗</span></button><a class="hero-link" href="#collection">Explore collection <span aria-hidden="true">↓</span></a></div><div class="hero-tags"><span>✧ Create freely</span><span>◈ Keep it organised</span></div></div>
         <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-spark spark-one">✳</span><span class="art-spark spark-two">✦</span><div class="art-card art-back"><span class="mini-lines"></span></div><div class="art-card art-front"><div class="art-object"><div class="object-top"></div><div class="object-front"></div><div class="object-side"></div></div><div class="art-card-label"><span>A little possibility.</span><span>↗</span></div></div><span class="art-sticker">GOOD THINGS<br>START HERE ↗</span></div>
       </div>
       <div class="stats">
@@ -33,6 +35,7 @@
       </div>
       <section id="collection" class="catalogue" aria-labelledby="collection-title">
         <div class="collection-header"><div><p class="eyebrow">CURATED BY YOU</p><h2 id="collection-title">Your collection <span id="count-badge">0</span></h2></div><div class="toolbar"><label class="search"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="search" type="search" maxlength="120" placeholder="Find something good…" aria-label="Search products"></label><button id="refresh" class="button secondary" title="Refresh products" aria-label="Refresh products"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 6M4 12l2 6a7 7 0 0 0 12-1"/></svg><span>Refresh</span></button></div></div>
+        <div class="collection-controls"><div class="collection-note"><span class="tiny-dot" aria-hidden="true"></span><span id="collection-hint">Your ideas, all in one place</span><button id="clear-search" class="text-button" hidden>Clear search ×</button></div><div class="display-controls"><label class="sort-control" for="sort">Sort by <select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="name">Name A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label><div class="view-switch" role="group" aria-label="Collection display"><button id="view-grid" aria-label="Grid view" aria-pressed="true" title="Grid view"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button><button id="view-list" aria-label="List view" aria-pressed="false" title="List view"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1"/></svg></button></div></div></div>
         <div id="load-error" class="error-banner" role="alert" hidden></div>
         <div id="loading" class="loading" role="status">Loading your collection…</div>
         <div id="empty" class="empty" hidden>
@@ -42,6 +45,7 @@
         <div id="products" class="product-grid" aria-live="polite"></div>
         <footer class="collection-footer"><span id="page-summary">Your products will appear here</span><div class="pagination"><button class="button secondary" id="previous" aria-label="Previous page" disabled>←</button><span id="page-number">Page 1</span><button class="button secondary" id="next" aria-label="Next page" disabled>→</button></div></footer>
       </section>
+      <div class="studio-tip"><span class="tip-icon" aria-hidden="true">✦</span><div><strong>Less clicking. More creating.</strong><p>Press <kbd>N</kbd> to add a product, or <kbd>/</kbd> to find one. Your next idea is one shortcut away.</p></div><span class="tip-art" aria-hidden="true">↗</span></div>
       <footer class="footer-note"><span>stockroom<span class="brand-dot">.</span></span><p>A place for your products. Space for your ideas.</p><span class="footer-mark" aria-hidden="true">✳</span></footer>
     </section>
   </main>
@@ -50,6 +54,7 @@
       <label for="name">Product name</label><input id="name" name="name" required maxlength="120" placeholder="e.g. Everyday notebook" autocomplete="off">
       <label for="price">Price (£)</label><input id="price" name="price" type="text" inputmode="decimal" required pattern="[0-9]+([.][0-9]{1,2})?" placeholder="0.00" aria-describedby="price-help"><small id="price-help">Enter a price in pounds, with up to two decimal places.</small>
       <label for="description">Description <span class="optional">(optional)</span></label><textarea id="description" name="description" rows="4" maxlength="2000" placeholder="What makes this product special?"></textarea>
+      <div class="draft-preview" aria-label="Product preview"><div class="draft-avatar" id="draft-initials" aria-hidden="true">✦</div><div><small>LIVE PREVIEW</small><strong id="draft-name">Your next great product</strong><span id="draft-price">£0.00</span></div></div>
       <p id="form-error" class="form-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="editor">Cancel</button><button type="submit" class="button primary" id="save">Save product</button></div>
     </form>
   </dialog>

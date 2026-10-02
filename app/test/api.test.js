@@ -146,6 +146,7 @@ test('dashboard and assets are served safely, including HEAD requests', async t 
   for (const [path, type, content] of [
     ['/', 'text/html', '<title>Stockroom'],
     ['/styles.css', 'text/css', '.product-grid'],
+    ['/studio.css', 'text/css', '@keyframes float-front'],
     ['/dashboard.js', 'text/javascript', 'function openEditor'],
   ]) {
     const response = await request(path);
@@ -179,4 +180,21 @@ test('search filters names and descriptions before counting and paginating', asy
   assert.equal((await (await request('/products?search=' + encodeURIComponent("' OR 1=1 --"))).json()).total, 0);
   assert.equal((await (await request('/products?search=%20%20')).json()).total, 3);
   assert.equal((await request('/products?search=' + 'a'.repeat(121))).status, 400);
+});
+
+test('sorting applies before pagination and combines with search', async t => {
+  const { request } = await fixture(t);
+  for (const [name, priceCents] of [['Zebra', 100], ['alpha', 300], ['Beta', 200]]) {
+    assert.equal((await request('/products', body({name, priceCents}))).status, 201);
+  }
+  const sorted = async query => (await (await request(`/products?${query}`)).json()).items;
+  assert.deepEqual((await sorted('sort=name')).map(item => item.name), ['alpha', 'Beta', 'Zebra']);
+  assert.deepEqual((await sorted('sort=price-asc&limit=1&offset=1')).map(item => item.priceCents), [200]);
+  assert.deepEqual((await sorted('sort=price-desc&search=a')).map(item => item.priceCents), [300, 200, 100]);
+  const oldest = await sorted('sort=oldest');
+  assert.deepEqual((await sorted('sort=newest')).map(item => item.id), oldest.map(item => item.id).reverse());
+  for (const value of ['', 'random', 'price_cents DESC; DROP TABLE products', '__proto__']) {
+    assert.equal((await request('/products?sort=' + encodeURIComponent(value))).status, 400);
+  }
+  assert.equal((await (await request('/products')).json()).total, 3);
 });
